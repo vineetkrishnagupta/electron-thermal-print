@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron App</title>
+</head>
+<body>
+  <h1>Click the Button!</h1>
+  <button id="myButton">Click Me!</button>
+
+  <script>
+    const button = document.getElementById('myButton');
+
+    // Trigger the function in the main process when button is clicked
+    button.addEventListener('click', () => {
+      window.electronAPI.onButtonClick();
+    });
+  </script>
+</body>
+</html>

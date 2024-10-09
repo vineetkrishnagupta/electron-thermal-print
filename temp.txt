@@ -1,0 +1,60 @@
+
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+const escpos = require('escpos');
+escpos.USB = require('escpos-usb');
+
+let mainWindow;
+
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+
+  // Example to print to a thermal printer using ESC/POS commands
+  printReceipt();
+}
+
+function printReceipt() {
+  try {
+    const device = new escpos.USB(); // For USB-based thermal printers
+    const printer = new escpos.Printer(device);
+
+    
+
+    device.open(function (error) {
+      if (error) {
+        console.error('Printer connection error: ', error);
+        return;
+      }
+
+      printer
+        .font('a')
+        .align('ct')
+        .style('bu')
+        .size(1, 1)
+        .text('Receipt Header')
+        .text('----------------------')
+        .align('lt')
+        .text('Item 1         $10')
+        .text('Item 2         $15')
+        .text('Total:         $25')
+        .text('----------------------')
+        .align('ct')
+        .text('Thank you!')
+        .cut()
+        .close();
+    });
+  } catch (err) {
+    console.error('Error printing receipt: ', err);
+  }
+}
+
+app.whenReady().then(createWindow);
